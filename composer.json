@@ -1,0 +1,9 @@
+{
+    "require": {
+        "automattic/woocommerce": "^3.0",
+        "league/csv": "^9.6",
+        "vlucas/phpdotenv": "^5.3",
+        "voku/arrayy": "^7.8",
+        "google/apiclient": "^2.0"
+    }
+}
