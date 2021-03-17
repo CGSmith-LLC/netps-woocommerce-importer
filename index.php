@@ -276,7 +276,8 @@ foreach ($dataFromNetPS as $wooKey => $data) {
     $data['categories'] = null;
     foreach ($beforeProductInsert as $category) {
         foreach ($categories as $checking) {
-            if (str_replace(' ', '-', trim(strtolower($category))) == $checking->slug) {
+            $check = str_replace(' ', '-', trim(strtolower($category)));
+            if ($check == $checking->slug) {
                 $cid = new stdClass();
                 $cid->id = $checking->id;
                 $cid->name = $checking->name;
@@ -291,4 +292,13 @@ foreach ($dataFromNetPS as $wooKey => $data) {
 
     echo 'Product updated [' . $response->id . '] ' . $response->name . PHP_EOL;
 }
-// Create category if needed
+
+
+function stripSpecialChars($string) {
+    $array = [',', '&', '.'];
+    foreach ($array as $replace) {
+        $string = str_replace($replace, '', $string);
+    }
+
+    return $string;
+}
