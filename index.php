@@ -6,7 +6,27 @@ use League\Csv\Statement;
 require __DIR__ . '/bootstrap.php';
 
 // Fetch all categories to see what we need to create
-$categories = $woocommerce->get('products/categories');
+$page = 1;
+$categories = [];
+while ($page !== false) {
+    $categories = array_merge($categories, $woocommerce->get('products/categories', array_merge([
+        'per_page' => 100,
+    ], ['page' => $page,])));
+    $headers = $woocommerce->http->getResponse()->getHeaders();
+
+    if (isset($headers["x-wp-totalpages"])) {
+        $totalPages = $headers["x-wp-totalpages"];
+    } else {
+        $totalPages = 1;
+    }
+
+    if ($page < $totalPages) {
+        $page++;
+    } else {
+        $page = false;
+    }
+}
+
 $dataFromNetPS = [];
 // Find uncategorized category ID
 $uncategorized_id = 0;
@@ -134,6 +154,7 @@ foreach ($records as $offset => $value) {
         $html .= (!empty($value['Planting_And_Growing_Para3'])) ? '<br>' . $value['Planting_And_Growing_Para3'] : '';
         $html .= (!empty($value['Planting_And_Growing_Para4'])) ? '<br>' . $value['Planting_And_Growing_Para4'] : '';
 
+        $photos = [];
         if ((!empty($value["Photo_1_Full_Size_URL"]))) {
             $photos[] = ['src' => $value["Photo_1_Full_Size_URL"]];
         }
@@ -291,10 +312,27 @@ foreach ($dataFromNetPS as $wooKey => $data) {
     $response = $woocommerce->put('products/' . $wooKey, $data);
 
     echo 'Product updated [' . $response->id . '] ' . $response->name . PHP_EOL;
+    removeFromProductsArray($wooKey, $products);
+}
+
+echo PHP_EOL . 'Could not find a match for the following products: ' . PHP_EOL;
+
+foreach ($products as $product) {
+    echo $product->name . ' [' . $product->id . '] (' . $product->sku . ')' . PHP_EOL;
+}
+
+function removeFromProductsArray($id, &$products)
+{
+    foreach ($products as $key => $product) {
+        if ($id == $product->id) {
+            unset($products[$key]);
+        }
+    }
 }
 
 
-function stripSpecialChars($string) {
+function stripSpecialChars($string)
+{
     $array = [',', '&', '.'];
     foreach ($array as $replace) {
         $string = str_replace($replace, '', $string);
