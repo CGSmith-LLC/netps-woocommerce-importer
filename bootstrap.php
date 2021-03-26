@@ -5,10 +5,6 @@ use Automattic\WooCommerce\Client;
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/functions.php';
 
-// Bootstrap
-if (php_sapi_name() != 'cli') {
-    throw new Exception('This application must be run on the command line.');
-}
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 

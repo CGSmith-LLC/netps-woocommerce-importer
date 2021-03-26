@@ -1,7 +1,6 @@
 <?php
 
 use League\Csv\Reader;
-use League\Csv\Statement;
 
 require __DIR__ . '/bootstrap.php';
 
