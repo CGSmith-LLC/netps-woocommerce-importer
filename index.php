@@ -318,6 +318,7 @@ echo PHP_EOL . 'Could not find a match for the following products: ' . PHP_EOL;
 
 foreach ($products as $product) {
     echo $product->name . ' [' . $product->id . '] (' . $product->sku . ')' . PHP_EOL;
+    $woocommerce->put('products/' . $product->id, ['status' => 'draft']);
 }
 
 function removeFromProductsArray($id, &$products)
